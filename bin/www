@@ -9,6 +9,8 @@ var debug = require('debug')('wangqiuke:server');
 var http = require('http');
 var https = require('https');
 var fs = require('fs');
+var mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost/wangqiuke');
 
 /**
  * Get port from environment and store in Express.
@@ -27,8 +29,8 @@ var server = http.createServer(app);
  * Create HTTPs server.
  */
 var options = {
-    key: fs.readFileSync('./config/hacksparrow-key.pem'),
-    cert: fs.readFileSync('./config/hacksparrow-cert.pem')
+    key :  fs.readFileSync('/home/ubuntu/wangqiuke/config/hacksparrow-key.pem'),
+    cert: fs.readFileSync('/home/ubuntu/wangqiuke/config/hacksparrow-cert.pem')
 };
 https.createServer(options, app).listen(443, function () {
     console.log('Https server listening on port ' + 443);
@@ -102,3 +104,10 @@ function onListening() {
     console.log('Listening on ' + bind);
     debug('Listening on ' + bind);
 }
+
+
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function (callback) {
+    console.log('the db is opened!');
+});
