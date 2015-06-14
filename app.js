@@ -4,11 +4,13 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var session = require('express-session')
+var session = require('express-session');
+var expressValidator = require('express-validator');
+var passport = require('passport');
+var flash = require('connect-flash');
 
 var routes = require('./routes/index');
-var users = require('./routes/users');
-var register = require('./routes/register');
+var user = require('./routes/user');
 
 var app = express();
 
@@ -19,7 +21,9 @@ app.set('view engine', 'jade');
 // uncomment after placing your favicon in /public
 //app.use(favicon(__dirname + '/public/favicon.ico'));
 app.use(logger('dev'));
+app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
+app.use(expressValidator());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(session(
@@ -29,10 +33,14 @@ app.use(session(
         saveUninitialized: true
     }));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(flash());
+app.use(passport.initialize());
+app.use(passport.session());
+require('./config/passport')(passport);
+
 
 app.use('/', routes);
-app.use('/users', users);
-app.use('/register/', register);
+app.use('/user', user);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
