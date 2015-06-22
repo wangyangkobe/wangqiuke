@@ -21,6 +21,7 @@ app.set('view engine', 'jade');
 // uncomment after placing your favicon in /public
 //app.use(favicon(__dirname + '/public/favicon.ico'));
 app.use(logger('dev'));
+app.use(require('express-domain-middleware'));
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 app.use(expressValidator());
@@ -38,6 +39,13 @@ app.use(passport.initialize());
 app.use(passport.session());
 require('./config/passport')(passport);
 
+app.use(function errorHandler(err, req, res, next) {
+    console.log('error on request %d %s %s', process.domain.id, req.method, req.url);
+    console.log(err.stack);
+    res.send(500, "Something bad happened. :(");
+    if(err.domain) {
+    }
+});
 
 app.use('/', routes);
 app.use('/user', user);
