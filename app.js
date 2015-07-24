@@ -27,12 +27,11 @@ app.use(bodyParser.json());
 app.use(expressValidator());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
-app.use(session(
-    {
-        secret: 'mySecret',
-        resave: true,
-        saveUninitialized: true
-    }));
+app.use(session({
+    secret: 'mySecret',
+    resave: true,
+    saveUninitialized: true
+}));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(flash());
 app.use(passport.initialize());
@@ -43,8 +42,6 @@ app.use(function errorHandler(err, req, res, next) {
     console.log('error on request %d %s %s', process.domain.id, req.method, req.url);
     console.log(err.stack);
     res.send(500, "Something bad happened. :(");
-    if(err.domain) {
-    }
 });
 
 app.use('/', routes);
